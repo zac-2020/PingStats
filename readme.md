@@ -21,7 +21,9 @@
 
 ### **命令格式**
 ```bash
-python script.py <host> [options]
+python pingstats.py <host> [options]
+# cmd
+pingstats.exe <host> [options]
 ```
 
 ### **必选参数**
