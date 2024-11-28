@@ -54,7 +54,7 @@ class PingData:
 
     @property
     def error_count(self):
-        return self.data.count(0)
+        return self.data.count(-1)
 
     @property
     def jitter(self):
@@ -64,7 +64,8 @@ class PingData:
 
     @property
     def delay_avg(self):
-        return self.sum / self.success_count if self.success_count > 0 else 0
+        # 错误是-1  有多少错误就补多少
+        return (self.sum + self.error_count) / self.success_count if self.success_count > 0 else 0
 
     @property
     def packet_loss_rate(self):
@@ -101,7 +102,7 @@ class PingStats:
         self.ttl = ttl
         self.max_count = 0 if forever else max_count
         self.count = 0  # 计数器
-        self.interval_ms = max(interval_ms, 10)  # 最低 10 毫秒 若用户将 interval_ms 设置为极小值，会导致循环过快，增加 CPU 占用。
+        self.interval_ms = max(interval_ms, 100)  # 最低 100 毫秒 若用户将 interval_ms 设置为极小值，会导致循环过快，增加 CPU 占用。
 
         self.near_10_ping_data = PingData(max_list=10)
         self.near_50_ping_data = PingData(max_list=50)
@@ -112,18 +113,28 @@ class PingStats:
         console = Console()
         with Live(self.create_rich_table(), console=console, auto_refresh=True) as live:
             while self.count < self.max_count or self.max_count == 0:
-                if self.interval_ms > 0 and self.count > 0:
-                    time.sleep(self.interval_ms / 1000)
-                self.count += 1
-                ping3.EXCEPTIONS = False
-                delay = ping3.ping(self.host, timeout=self.timeout_s, unit='ms', ttl=self.ttl, size=self.size)
-
-                self.near_n_ping_data.append(delay or 0)
-                self.near_1000_ping_data.append(delay or 0)
-                self.near_10_ping_data.append(delay or 0)
-                self.near_50_ping_data.append(delay or 0)
-
-                live.update(self.create_rich_table())
+                try:
+                    if self.interval_ms > 0 and self.count > 0:
+                        time.sleep(self.interval_ms / 1000)
+                    self.count += 1
+                    ping3.EXCEPTIONS = False
+                    delay = ping3.ping(self.host, timeout=self.timeout_s, unit='ms', ttl=self.ttl, size=self.size)
+                    if delay is False:
+                        delay = -1
+                        err_msg = "error"
+                    elif delay is None:
+                        delay = -1
+                        err_msg = "timeout"
+                    self.near_n_ping_data.append(delay)
+                    self.near_1000_ping_data.append(delay)
+                    self.near_10_ping_data.append(delay)
+                    self.near_50_ping_data.append(delay)
+                    console.log(
+                        f"PingStats 来自({self.host})的回复：字节={self.size} 时间={err_msg if delay == -1 else delay} ms ")
+                    live.update(self.create_rich_table())
+                except KeyboardInterrupt:
+                    console.log("bye.")
+                    exit(0)
 
     def create_rich_table(self):
         elapsed_time = time.strftime("%H:%M:%S", time.gmtime(self.count * self.interval_ms / 1000))
