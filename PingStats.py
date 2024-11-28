@@ -6,6 +6,7 @@
 # @File     : PingTools.py
 # @Board    : None
 # @version  : PingTools v1.0
+from xml.etree.ElementTree import VERSION
 
 import ping3
 import argparse
@@ -130,7 +131,7 @@ class PingStats:
                     self.near_10_ping_data.append(delay)
                     self.near_50_ping_data.append(delay)
                     console.log(
-                        f"PingStats 来自({self.host})的回复：字节={self.size} 时间={err_msg if delay == -1 else delay} ms ")
+                        f"PingStats {VERSION} 来自({self.host})的回复：字节={self.size} 时间={err_msg if delay == -1 else delay} ms ")
                     live.update(self.create_rich_table())
                 except KeyboardInterrupt:
                     console.log("bye.")
@@ -139,8 +140,10 @@ class PingStats:
     def create_rich_table(self):
         elapsed_time = time.strftime("%H:%M:%S", time.gmtime(self.count * self.interval_ms / 1000))
         table = Table(
-            title=f"PingStats 来自({self.host})的回复：字节={self.size} 时间={self.near_10_ping_data.delay:.2f}ms"
+            title=f"PingStats {VERSION}"
+            # f"来自({self.host})的回复：字节={self.size} 时间={self.near_10_ping_data.delay:.2f}ms"
                   f" 运行时间: {elapsed_time}"
+                  f""
         )
         table.add_column(f"当前：{self.near_10_ping_data.delay:.2f}ms", justify="center", style="cyan", no_wrap=True)
         table.add_column("平均延迟", justify="center", style="cyan", no_wrap=True)
@@ -168,7 +171,8 @@ class PingStats:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="PingStats Tool")
+    VERSION = "v1.0.1"
+    parser = argparse.ArgumentParser(description=f"PingStats Tool {VERSION}")
 
     # 通用目标地址
     parser.add_argument('host', type=str, help='目标主机地址')
