@@ -6,15 +6,12 @@
 # @File     : PingTools.py
 # @Board    : None
 # @version  : PingTools v1.0
-from xml.etree.ElementTree import VERSION
-
+import time, argparse, sys
 import ping3
-import argparse
 # https://rich.pythonlang.cn/en/stable/traceback.html
 from rich.console import Console
 from rich.table import Table
 from rich.live import Live
-import time
 
 
 class PingData:
@@ -135,7 +132,7 @@ class PingStats:
                     live.update(self.create_rich_table())
                 except KeyboardInterrupt:
                     console.log("bye.")
-                    exit(0)
+                    sys.exit(0)
 
     def create_rich_table(self):
         elapsed_time = time.strftime("%H:%M:%S", time.gmtime(self.count * self.interval_ms / 1000))
