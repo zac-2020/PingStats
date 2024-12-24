@@ -109,7 +109,7 @@ class PingStats:
 
     def start(self):
         console = Console()
-        with Live(self.create_rich_table(), console=console, auto_refresh=True) as live:
+        with Live(self.create_rich_table(), console=console, auto_refresh=False, refresh_per_second=4) as live:
             while self.count < self.max_count or self.max_count == 0:
                 try:
                     if self.interval_ms > 0 and self.count > 0:
@@ -129,7 +129,7 @@ class PingStats:
                     self.near_50_ping_data.append(delay)
                     console.log(
                         f"PingStats {VERSION} 来自({self.host})的回复：字节={self.size} 时间={err_msg if delay == -1 else delay} ms ")
-                    live.update(self.create_rich_table())
+                    live.update(self.create_rich_table(), refresh=True)
                 except KeyboardInterrupt:
                     console.log("bye.")
                     sys.exit(0)
