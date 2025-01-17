@@ -24,10 +24,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 部署python包
+      - name: 部署基础包
         run: |
           python -m pip install --upgrade pip
           pip install pipenv pyinstaller
+
+
+      - name: 部署项目环境
+        run: |
           pipenv install
 
       - name: 编译可执行文件
