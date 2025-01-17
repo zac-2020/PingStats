@@ -39,6 +39,7 @@ jobs:
 
       - name: 构建exe
         run: |
+          pip list
           pyinstaller -F PingStats.py
 
 
