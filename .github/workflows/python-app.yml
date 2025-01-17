@@ -14,12 +14,15 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-2022
-    
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.12"
@@ -34,12 +37,13 @@ jobs:
         run: |
           pipenv install
 
-      - name: 编译可执行文件
+      - name: 构建exe
         run: |
-          pyinstaller -F PingStats.py
+          pyinstaller -F PingStats.exe
+
 
       - name: 上传artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PingStats.exe
+          #          name: PingStats.exe
           path: dist/PingStats.exe
