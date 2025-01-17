@@ -36,13 +36,13 @@ jobs:
       - name: 部署项目环境
         run: |
           pipenv install
-          pipenv shell 
-          pip install pyinstaller
+
+          pipenv run pip install pyinstaller
 
       - name: 构建exe
         run: |
-          pip list
-          pyinstaller -F PingStats.py
+          pipenv run pip list
+          pipenv run pyinstaller -F PingStats.py
 
 
       - name: 上传artifact
