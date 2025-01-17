@@ -39,7 +39,7 @@ jobs:
 
       - name: 构建exe
         run: |
-          pyinstaller -F PingStats.exe
+          pyinstaller -F PingStats.py
 
 
       - name: 上传artifact
