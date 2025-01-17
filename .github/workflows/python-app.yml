@@ -30,3 +30,7 @@ jobs:
         pip install pipenv pyinstaller
         pipenv install
         pyinstaller -F PingStats.py
+
+    - name: 编译可执行文件
+      run: |
+        pyinstaller -F PingStats.py
