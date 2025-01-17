@@ -168,7 +168,7 @@ class PingStats:
 
 
 if __name__ == '__main__':
-    VERSION = "v1.0.1"
+    VERSION = "v1.0.2"
     parser = argparse.ArgumentParser(description=f"PingStats Tool {VERSION}")
 
     # 通用目标地址
